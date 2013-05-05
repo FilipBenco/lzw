@@ -1,28 +1,22 @@
 #include "encoder.h"
-#include <iostream>
-Encoder::Encoder(string inputFile)
+
+Encoder::Encoder(string input)
 {
-    io_file=fopen(inputFile.c_str(),"rb");
-    if(io_file) {
-        lzw_file=fopen("output.lzw","wb");
-        if(lzw_file) {
+    this->input_file.open(input.c_str(),ios::binary|ios::in);
+    if (input_file.is_open()) {
+        this->lzw_file.open("output.lzw",ios::binnary|ios::out|ios::trunc);
+        if(lzw_file.is_open()) {
             /* write LZW identifier L+starting bytes */
-            putc('L', lzw_file);
-            if(putc(MIN_CODE_LEN, lzw_file) == MIN_CODE_LEN) {
-                this->compress();
-            }
-            fclose(lzw_file);
-            lzw_file = 0;
+            lzw_file << 'L' << MIN_CODE_LEN;
+            this->encode();
+            lzw_file.close();
         }
 
-        fclose(io_file);
-        io_file = 0;
-    } else {
-        std::cout << "pp";
+        input_file.close();
     }
 }
 
-void Encoder::compress() {
+void Encoder::encode() {
     unsigned int next_code;
     unsigned int character;
     unsigned int string_code;
