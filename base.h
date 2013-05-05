@@ -4,23 +4,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <string.h>
+#include <string>
 #include <assert.h>
+#include <fstream>
 #define ATLASSERT assert
 
 #define MIN_CODE_LEN    9                   /* min # bits in a code word */
 #define MAX_CODE_LEN    20
+
 #define CURRENT_MAX_CODES(x)     (1UL << (x))
 
 #define FIRST_CODE      (1 << CHAR_BIT)     /* value of 1st string code */
-
-#if (MIN_CODE_LEN <= CHAR_BIT)
-#error Code words must be larger than 1 character
-#endif
-
-#if (MAX_CODE_LEN >= 25)
-#error Code words must fit in an integer
-#endif
 
 #define BITS 17                   /* Setting the number of bits to 12, 13*/
 #define HASHING_SHIFT (BITS-8)    /* or 14 affects several constants.    */
@@ -51,16 +45,12 @@
 #error define smaller or bigger table sizes
 #endif
 
-#if (TABLE_SIZE <= MAX_VALUE)
-#error your prime numbers need attention
-#endif
-
-#if (BITS > MAX_CODE_LEN)
-#error BITS can only go up to a maximum
-#endif
 
 class Base {
 protected:
+    FILE *lzw_file_old; //toto ak, tak zmen na ostream, nech pouzivame c++
+    ostream lzw_file;
+
     int *code_value;                  /* This is the code value array        */
     unsigned int *prefix_code;        /* This array holds the prefix codes   */
     unsigned char *append_character;  /* This array holds the appended chars */
@@ -113,8 +103,7 @@ protected:
         return ret;
     }
 
-    FILE* io_file;
-    FILE *lzw_file;
+    FILE* io_file; //JA TUTO PROPERTY NEPOTREBUJEM TAK SI JU PRESUN DO DEKODERA A ZMAZ ODTIALTO
     int io_error;
 public:
     unsigned long u_io, u_comp;

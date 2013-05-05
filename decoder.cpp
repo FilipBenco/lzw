@@ -4,24 +4,24 @@ Decoder::Decoder(string outputFile)
 {
     io_error = 1;
 
-    lzw_file=fopen("output.lzw","rb");
-    if(lzw_file) {
+    lzw_file_old=fopen("output.lzw","rb");
+    if(lzw_file_old) {
         /* check LZW identifier L+starting bytes */
-        int ch1 = getc(lzw_file);
-        int ch2 = getc(lzw_file);
+        int ch1 = getc(lzw_file_old);
+        int ch2 = getc(lzw_file_old);
         if('L' == ch1 && MIN_CODE_LEN==ch2) {
             io_file=fopen(outputFile.c_str(),"wb");
             if(io_file) {
                 expand();
-                io_error = ferror(lzw_file) || ferror(io_file);
+                io_error = ferror(lzw_file_old) || ferror(io_file);
 
                 fclose(io_file);
                 io_file = 0;
             }
         }
 
-        fclose(lzw_file);
-        lzw_file = 0;
+        fclose(lzw_file_old);
+        lzw_file_old = 0;
     }
 }
 
