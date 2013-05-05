@@ -2,16 +2,15 @@
 
 Encoder::Encoder(string input)
 {
-    this->input_file.open(input.c_str(),ios::binary|ios::in);
+    this->input_file.open(input.c_str(),ios::binary);
     if (input_file.is_open()) {
-        this->lzw_file.open("output.lzw",ios::binnary|ios::out|ios::trunc);
+        this->lzw_file.open("output.lzw",ios::binary|ios::trunc);
         if(lzw_file.is_open()) {
-            /* write LZW identifier L+starting bytes */
-            lzw_file << 'L' << MIN_CODE_LEN;
+            lzw_file.put('L');
+            lzw_file.put(MIN_CODE_LEN);
             this->encode();
             lzw_file.close();
         }
-
         input_file.close();
     }
 }
@@ -26,16 +25,15 @@ void Encoder::encode() {
 
     CUR_BITS = MIN_CODE_LEN;
     bit_limit = CURRENT_MAX_CODES(CUR_BITS) - 1;
-    output_bit_count=0;
-    output_bit_buffer=0L;
+    output_bits_count=0;
+    output_bits_buffer=0L;
 
-    ATLASSERT(256==FIRST_CODE);
     next_code=FIRST_CODE;       /* Next code is the next available string code*/
     for (i=0;i<TABLE_SIZE;i++)  /* Clear out the string table before starting */
         code_value[i]=-1;
 
-    string_code=getc_src();      /* Get the first code                         */
-    if(-1 == string_code)
+    string_code = input_file.get();      /* Get the first code                         */
+    if(EOF == string_code)
         return; /* empty file or error */
 
     /*
@@ -43,35 +41,36 @@ void Encoder::encode() {
 ** the input has been exhausted.  Note that it stops adding codes to the
 ** table after all of the possible codes have been defined.
 */
-    while ((character=getc_src()) != -1)
+    while (input_file.good())
     {
-        index=find_match(string_code,character);/* See if the string is in */
-        if (code_value[index] != -1)            /* the table.  If it is,   */
-            string_code=code_value[index];        /* get the code value.  If */
-        else                                    /* the string is not in the*/
-        {                                       /* table, try to add it.   */
-            if (next_code <= MAX_CODE)
-            {
-                code_value[index]=next_code++;
-                prefix_code[index]=string_code;
-                append_character[index]=character;
-            }
+        character=input_file.get();
+        if(input_file.good()) {
+            index=find_match(string_code,character);/* See if the string is in */
+            if (code_value[index] != -1)            /* the table.  If it is,   */
+                string_code=code_value[index];        /* get the code value.  If */
+            else                                    /* the string is not in the*/
+            {                                       /* table, try to add it.   */
+                if (next_code <= MAX_CODE)
+                {
+                    code_value[index]=next_code++;
+                    prefix_code[index]=string_code;
+                    append_character[index]=character;
+                }
 
-            /* are we using enough bits to write out this code word? */
-            if(string_code >= bit_limit && CUR_BITS < BITS)
-            {
-                /* mark need for bigger code word with all ones */
-                output_code(bit_limit);
-                CUR_BITS++;
-                bit_limit = (CURRENT_MAX_CODES(CUR_BITS) - 1);
-            }
+                /* are we using enough bits to write out this code word? */
+                if(string_code >= bit_limit && CUR_BITS < BITS)
+                {
+                    /* mark need for bigger code word with all ones */
+                    output_code(bit_limit);
+                    CUR_BITS++;
+                    bit_limit = (CURRENT_MAX_CODES(CUR_BITS) - 1);
+                }
 
-            ATLASSERT(string_code < bit_limit);
-
-            output_code(string_code);  /* When a string is found  */
-            string_code=character;            /* that is not in the table*/
-        }                                   /* I output the last string*/
-    }                                     /* after adding the new one*/
+                output_code(string_code);  /* When a string is found  */
+                string_code=character;            /* that is not in the table*/
+            }                                   /* I output the last string*/
+        }                                     /* after adding the new one*/
+    }
     /*
 ** End of the main loop.
 */
@@ -106,35 +105,26 @@ void Encoder::output_code(unsigned int code) {
     //static int output_bit_count=0;
     //static unsigned long output_bit_buffer=0L;
 
-    ATLASSERT(output_bit_count < 8); /* leftovers */
-    ATLASSERT(CUR_BITS + output_bit_count <= 32);
-    /*codes <256 are possible for single characters, zero bytes etc*/
-
-    if(-1 == code) {
+    if(EOF == code) {
         /* pad remaining zeros and flush the last byte */
-        if(output_bit_count) {
-            output_bit_buffer >>= 24;
-            ATLASSERT((output_bit_buffer & 0xFF) == output_bit_buffer);
-            putc_comp(output_bit_buffer);
-
-            output_bit_count = 0;
-            output_bit_buffer = 0; /* in case some eejit calls us again */
+        if(output_bits_count) {
+            output_bits_buffer >>= 24;
+            lzw_file.put(output_bits_buffer);
+            output_bits_count = 0;
+            output_bits_buffer = 0; /* in case some eejit calls us again */
         }
-
         return;
     }
 
-    ATLASSERT(code < (1UL << CUR_BITS));
-
     /* sends new bytes near the top (MSB) */
-    output_bit_buffer |= (unsigned long) code << (32-CUR_BITS-output_bit_count);
-    output_bit_count += CUR_BITS;
-    while (output_bit_count >= 8)
+    output_bits_buffer |= (unsigned long) code << (32-CUR_BITS-output_bits_count);
+    output_bits_count += CUR_BITS;
+    while (output_bits_count >= 8)
     {
         /* no check for error but if there was a problem we'd know from the time we wrote the identifier */
-        putc_comp(output_bit_buffer >> 24);
-        output_bit_buffer <<= 8;
-        output_bit_count -= 8;
+        lzw_file.put(output_bits_buffer >> 24);
+        output_bits_buffer <<= 8;
+        output_bits_count -= 8;
     }
 }
 

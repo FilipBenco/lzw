@@ -3,6 +3,6 @@
 #include <iostream>
 int main(int argc, char *argv[])
 {
-    Encoder encoder = Encoder("test.bmp");
-    Decoder decoder = Decoder("output.bmp");
+    Encoder encoder("test.bmp");
+    Decoder decoder("output.bmp");
 }

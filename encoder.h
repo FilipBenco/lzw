@@ -9,6 +9,7 @@ using namespace std;
 class Encoder : public Base
 {
     ifstream input_file;
+    ofstream lzw_file;
     int output_bits_count;
     unsigned long output_bits_buffer;
 public:

@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <string>
 #include <assert.h>
-#include <fstream>
+
 #define ATLASSERT assert
 
 #define MIN_CODE_LEN    9                   /* min # bits in a code word */
@@ -48,8 +48,8 @@
 
 class Base {
 protected:
-    FILE *lzw_file_old; //toto ak, tak zmen na ostream, nech pouzivame c++
-    ostream lzw_file;
+    FILE *lzw_file_old; //TOTO tiez pouzivam uz len lokalne mozes to zmazat alebo presunut k sebe
+
 
     int *code_value;                  /* This is the code value array        */
     unsigned int *prefix_code;        /* This array holds the prefix codes   */
@@ -68,8 +68,8 @@ protected:
         return ch;
     }
     virtual int getc_comp() {
-        ATLASSERT(lzw_file);
-        int ch = getc(lzw_file);
+        ATLASSERT(lzw_file_old);
+        int ch = getc(lzw_file_old);
         if(EOF == ch)
             return -1;
 
@@ -77,9 +77,9 @@ protected:
         return ch;
     }
     virtual int putc_comp(int ch) {
-        ATLASSERT(lzw_file);
+        ATLASSERT(lzw_file_old);
         ATLASSERT(ch >= 0 && ch < 256);
-        int ret = putc(ch, lzw_file);
+        int ret = putc(ch, lzw_file_old);
 
         if(ret != EOF) {
             ATLASSERT(ret == ch);
