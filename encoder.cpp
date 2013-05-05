@@ -21,7 +21,6 @@ void Encoder::encode() {
     unsigned int string_code;
     unsigned int index;
     unsigned int bit_limit;
-    int i;
 
     CUR_BITS = MIN_CODE_LEN;
     bit_limit = CURRENT_MAX_CODES(CUR_BITS) - 1;
@@ -29,11 +28,12 @@ void Encoder::encode() {
     output_bits_buffer=0L;
 
     next_code=FIRST_CODE;       /* Next code is the next available string code*/
-    for (i=0;i<TABLE_SIZE;i++)  /* Clear out the string table before starting */
+    for (int i=0;i<TABLE_SIZE;i++)  /* Clear out the string table before starting */
         code_value[i]=-1;
 
-    string_code = input_file.get();      /* Get the first code                         */
-    if(EOF == string_code)
+     /* Get the first code                         */
+    string_code = input_file.get();
+    if(!input_file.good())
         return; /* empty file or error */
 
     /*
