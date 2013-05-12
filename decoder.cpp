@@ -1,9 +1,9 @@
 #include "decoder.h"
 
-Decoder::Decoder(string outputFile)
+Decoder::Decoder(string inputFile, string outputFile)
 {
 	try {
-		this->lzw_file.open("output.lzw", ios::binary);
+		this->lzw_file.open(inputFile.c_str(), ios::binary);
 		if (this->lzw_file.is_open()) {
 			
 			
@@ -13,28 +13,28 @@ Decoder::Decoder(string outputFile)
 				char c_check_code[4];
 				this->lzw_file.get(c_check_code, 4);
 				string check_code(c_check_code);
-				std::cerr << check_code;
+				
 				if (check_code.compare("LZW") == 0 && this->lzw_file.get() == MIN_CODE_LEN) {
 					this->expand();
 				} else {
-					throw new DecoderException("Subor'" + outputFile + "' nie je zakodovany kodovanim LZW");
+					throw "File '" + inputFile + "' has not LZW format";
 				}
 				
 				
 			} else {
-				throw new DecoderException("Nepodarilo sa otvorit '" + outputFile + "' subor");
+				throw "Unable to open file '" + outputFile + "'";
 			}
 			
 			
 		} else {
-			throw new DecoderException("Nepodarilo sa otvorit 'output.lzw' subor");
+			throw "Unable to open file '" + inputFile + "'";
 		}
 		
 		this->lzw_file.close();
 		this->output_file.close();
 		
-	} catch(exception &e) {
-		std::cerr << e.what();
+	} catch(const char* str) {
+		std::cerr << str << std::endl;
 	}
 }
 
@@ -52,21 +52,18 @@ void Decoder::expand() {
     this->input_bit_buffer=0L;
 
 
-cerr << "expand: 55";
 
     next_code=FIRST_CODE;        /* This is the next available code to define */
 
     old_code=this->input_code();       /* Read in the first code, initialize the */
     
-cerr << "expand: 61";
 	character=old_code;          /* character variable, and send the first */
 	// prepis putc_out funkcie
 	this->output_file.put(old_code);
 	if(!this->output_file.good()) {
-		throw new DecoderException("Nepodarilo sa vlozit do vystupneho suboru inicializacny kod");
+		throw "Unable to insert initialisation code into output file";
 	}
 	//
-cerr << "expand: 69";
 	
     /*
     **  This is the main expansion loop.  It reads in characters from the LZW file
@@ -75,7 +72,6 @@ cerr << "expand: 69";
 	while(true) {
 		try {
 			new_code=this->input_code();
-cerr << "expand: 78";
 			
 			/* look for code length increase marker */
 			if(bit_limit == new_code && this->CUR_BITS < BITS) {
@@ -84,7 +80,6 @@ cerr << "expand: 78";
 
 				new_code=input_code();
 			}
-cerr << "expand: 87";
 
 			/*
 			** This code checks for the special STRING+CHARACTER+STRING+CHARACTER+STRING
@@ -92,7 +87,6 @@ cerr << "expand: 87";
 			** the last code, and adding a single character to the end of the decode string.
 			*/
 			if (new_code>=next_code) {
-cerr << "expand: 95";
 				*decode_stack=character;
 				string=decode_string(decode_stack+1,old_code);
 				
@@ -105,13 +99,12 @@ cerr << "expand: 95";
 			/*
 			** Now we output the decoded string in reverse order.
 			*/
-cerr << "expand: 107: " << endl;
 			
 			character=*string;
 			while (string >= decode_stack) {
 				this->output_file.put(*string--);
 				if(!this->output_file.good()) {
-					throw new DecoderException("Nepodarilo sa vlozit do vystupneho suboru inicializacny kod");
+					throw "Unable to insert decoded code into output string";
 				}
 			}
 			
@@ -124,10 +117,9 @@ cerr << "expand: 107: " << endl;
 				next_code++;
 			}
 			old_code=new_code;
-cerr << "expand: 126";
 			
-		} catch (exception &e) {
-			std::cerr << e.what();
+		} catch (const char* str) {
+			std::cerr << str << std::endl;
 			break;
 		}
 	}
@@ -138,21 +130,18 @@ cerr << "expand: 126";
 int Decoder::input_code() {
 	int c;
 	
-	while (this->input_bit_count <= 24)
-	{
-		
-		// prepis funkcie getc_comp    
+	while (this->input_bit_count <= 24) {
+		  
 		c = this->lzw_file.get();
 		if (!this->lzw_file.good())
 			break;
-		//
 		
 		this->input_bit_buffer |= (unsigned long) c << (24 - this->input_bit_count);
 		this->input_bit_count += 8;
 	}
 	
 	if(this->input_bit_count < this->CUR_BITS) {
-		throw new DecoderException("Narazil som na koniec suboru");
+		throw "";//"Reached end of input file";
 	}
 	
 	unsigned int return_value = this->input_bit_buffer >> (32- this->CUR_BITS);
@@ -164,21 +153,13 @@ int Decoder::input_code() {
 
 
 unsigned char* Decoder::decode_string(unsigned char *buffer, unsigned int code) {
-	int i;
-cerr << "decode_string: 168" << endl;
-	i=0;
-	while (code >= FIRST_CODE)
-	{
-cerr << "decode_string: 172" << endl;
+	int i=0;
+	while (code >= FIRST_CODE) {
 		*buffer++ = append_character[code];
-cerr << "decode_string: 174" << endl;
 		code=prefix_code[code];
-cerr << "decode_string: 176" << endl;
 		i++;
 	}
-cerr << "decode_string: 179" << endl;
 	*buffer=code;
-cerr << "decode_string: 181" << endl;
 	return buffer;
 }
 

@@ -15,7 +15,7 @@ class Decoder : public Base
     int input_bit_count;
     unsigned long input_bit_buffer;
 public:
-    Decoder(string outputFile);
+    Decoder(string inputFile, string outputFile);
 protected:
     unsigned char *decode_string(unsigned char *buffer,unsigned int code);
     void expand();

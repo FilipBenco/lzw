@@ -1,19 +1,21 @@
 #include "encoder.h"
 
-Encoder::Encoder(string input)
-{
-    this->input_file.open(input.c_str(),ios::binary);
-    if (input_file.is_open()) {
-        this->lzw_file.open("output.lzw",ios::binary|ios::trunc);
-        if(lzw_file.is_open()) {
-	    lzw_file.write("LZW", 3);
-            lzw_file.put(MIN_CODE_LEN);
-            this->encode();
-            lzw_file.close();
-        }
-        input_file.close();
-    }
+Encoder::Encoder(string inputFile, string outputFile) {
+	
+	this->input_file.open(inputFile.c_str(), ios::binary);
+	if (input_file.is_open()) {
+		this->lzw_file.open(outputFile.c_str(), ios::binary|ios::trunc);
+		if(lzw_file.is_open()) {
+			lzw_file.write("LZW", 3);
+			lzw_file.put(MIN_CODE_LEN);
+			this->encode();
+			lzw_file.close();
+		}
+		input_file.close();
+	}
+	
 }
+
 
 void Encoder::encode() {
     unsigned int next_code;

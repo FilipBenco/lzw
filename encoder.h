@@ -14,7 +14,7 @@ class Encoder : public Base
     int output_bits_count;
     unsigned long output_bits_buffer;
 public:
-    Encoder(string input);
+    Encoder(string inputFile, string outputFile);
 private:
     void encode();
     int find_match(unsigned int hash_prefix,unsigned int hash_character);
