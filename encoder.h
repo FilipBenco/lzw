@@ -2,6 +2,7 @@
 #define ENCODER_H
 
 #include <string>
+#include <iostream>
 #include <fstream>
 #include "base.h"
 using namespace std;

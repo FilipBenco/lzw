@@ -6,7 +6,7 @@ Encoder::Encoder(string input)
     if (input_file.is_open()) {
         this->lzw_file.open("output.lzw",ios::binary|ios::trunc);
         if(lzw_file.is_open()) {
-            lzw_file.put('L');
+	    lzw_file.write("LZW", 3);
             lzw_file.put(MIN_CODE_LEN);
             this->encode();
             lzw_file.close();
@@ -28,19 +28,19 @@ void Encoder::encode() {
     output_bits_buffer=0L;
 
     next_code=FIRST_CODE;       /* Next code is the next available string code*/
-    for (int i=0;i<TABLE_SIZE;i++)  /* Clear out the string table before starting */
+    for (int i=0; i<TABLE_SIZE; i++) /* Clear out the string table before starting */
         code_value[i]=-1;
 
-     /* Get the first code                         */
+    /* Get the first code                         */
     string_code = input_file.get();
     if(!input_file.good())
         return; /* empty file or error */
 
     /*
-** This is the main loop where it all happens.  This loop runs util all of
-** the input has been exhausted.  Note that it stops adding codes to the
-** table after all of the possible codes have been defined.
-*/
+    ** This is the main loop where it all happens.  This loop runs util all of
+    ** the input has been exhausted.  Note that it stops adding codes to the
+    ** table after all of the possible codes have been defined.
+    */
     while (input_file.good())
     {
         character=input_file.get();
@@ -49,7 +49,7 @@ void Encoder::encode() {
             if (code_value[index] != -1)            /* the table.  If it is,   */
                 string_code=code_value[index];        /* get the code value.  If */
             else                                    /* the string is not in the*/
-            {                                       /* table, try to add it.   */
+            {   /* table, try to add it.   */
                 if (next_code <= MAX_CODE)
                 {
                     code_value[index]=next_code++;
@@ -72,8 +72,8 @@ void Encoder::encode() {
         }                                     /* after adding the new one*/
     }
     /*
-** End of the main loop.
-*/
+    ** End of the main loop.
+    */
 
     output_code(string_code); /* Output the last code               */
     output_code(-1);

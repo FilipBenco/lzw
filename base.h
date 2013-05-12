@@ -1,13 +1,12 @@
 #ifndef BASE_H
 #define BASE_H
 
-#include <stdio.h>
+//#include <stdio.h>
+#include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <limits.h>
 #include <string>
-#include <assert.h>
-
-#define ATLASSERT assert
 
 #define MIN_CODE_LEN    9                   /* min # bits in a code word */
 #define MAX_CODE_LEN    20
@@ -57,42 +56,7 @@ protected:
     unsigned char decode_stack[4000]; /* This array holds the decoded string */
     unsigned char CUR_BITS;           /* ~nab: added for variable bit size */
 
-    /* -1 return indicates either EOF or some IO error */
-    virtual int getc_src() {
-        ATLASSERT(io_file);
-        int ch = getc(io_file);
-        if(EOF == ch)
-            return -1;
-
-        u_io++;
-        return ch;
-    }
-    virtual int getc_comp() {
-        ATLASSERT(lzw_file_old);
-        int ch = getc(lzw_file_old);
-        if(EOF == ch)
-            return -1;
-
-        u_comp++;
-        return ch;
-    }
-    virtual int putc_comp(int ch) {
-        ATLASSERT(lzw_file_old);
-        ATLASSERT(ch >= 0 && ch < 256);
-        int ret = putc(ch, lzw_file_old);
-
-        if(ret != EOF) {
-            ATLASSERT(ret == ch);
-            u_comp++;
-        }
-        else
-            ret = -1;
-
-        return ret;
-    }
     virtual int putc_out(int ch) {
-        ATLASSERT(io_file);
-        ATLASSERT(ch >= 0 && ch < 256);
         int ret = putc(ch, io_file);
 
         if(ret != EOF)
@@ -106,16 +70,29 @@ protected:
     FILE* io_file; //JA TUTO PROPERTY NEPOTREBUJEM TAK SI JU PRESUN DO DEKODERA A ZMAZ ODTIALTO
     int io_error;
 public:
-    unsigned long u_io, u_comp;
+    unsigned long u_io;
     Base() {
         code_value=(int*)malloc(TABLE_SIZE*sizeof(int));
         prefix_code=(unsigned int*)malloc(TABLE_SIZE*sizeof(unsigned int));
         append_character=(unsigned char*)malloc(TABLE_SIZE*sizeof(unsigned char));
 
-        u_comp = 0;
         u_io = 0;
     }
 };
 
+
+
+class DecoderException: std::exception {
+private:
+	std::string text;
+public:
+	DecoderException(std::string text) {
+		this->text = text;
+	}
+	~DecoderException() _GLIBCXX_USE_NOEXCEPT {
+		
+	}
+	const char* what() const _GLIBCXX_USE_NOEXCEPT {return this->text.c_str(); };
+};
 #endif // BASE_H
 
