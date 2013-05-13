@@ -1,8 +1,6 @@
 #ifndef DECODER_H
 #define DECODER_H
 
-#include <string>
-#include <iostream>
 #include <fstream>
 #include "base.h"
 
@@ -14,6 +12,8 @@ class Decoder : public Base
     ofstream output_file;
     int input_bit_count;
     unsigned long input_bit_buffer;
+	unsigned char decode_stack[4000]; 
+
 public:
     Decoder(string inputFile, string outputFile);
 protected:

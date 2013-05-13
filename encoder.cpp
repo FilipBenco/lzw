@@ -2,11 +2,13 @@
 
 Encoder::Encoder(string inputFile, string outputFile) {
 	
+	this->code_value=(int*)malloc(TABLE_SIZE*sizeof(int));
+
 	this->input_file.open(inputFile.c_str(), ios::binary);
 	if (input_file.is_open()) {
 		this->lzw_file.open(outputFile.c_str(), ios::binary|ios::trunc);
 		if(lzw_file.is_open()) {
-			lzw_file.write("LZW", 3);
+			lzw_file.write(LZW_DETECTION, sizeof(LZW_DETECTION));
 			lzw_file.put(MIN_CODE_LEN);
 			this->encode();
 			lzw_file.close();
@@ -16,6 +18,9 @@ Encoder::Encoder(string inputFile, string outputFile) {
 	
 }
 
+Encoder::~Encoder() {
+	free(this->code_value);
+}
 
 void Encoder::encode() {
     unsigned int next_code;
@@ -24,8 +29,8 @@ void Encoder::encode() {
     unsigned int index;
     unsigned int bit_limit;
 
-    CUR_BITS = MIN_CODE_LEN;
-    bit_limit = CURRENT_MAX_CODES(CUR_BITS) - 1;
+    this->current_bits = MIN_CODE_LEN;
+    bit_limit = CURRENT_MAX_CODES(this->current_bits) - 1;
     output_bits_count=0;
     output_bits_buffer=0L;
 
@@ -60,12 +65,12 @@ void Encoder::encode() {
                 }
 
                 /* are we using enough bits to write out this code word? */
-                if(string_code >= bit_limit && CUR_BITS < BITS)
+                if(string_code >= bit_limit && this->current_bits < BITS)
                 {
                     /* mark need for bigger code word with all ones */
                     output_code(bit_limit);
-                    CUR_BITS++;
-                    bit_limit = (CURRENT_MAX_CODES(CUR_BITS) - 1);
+                    this->current_bits++;
+                    bit_limit = (CURRENT_MAX_CODES(this->current_bits) - 1);
                 }
 
                 output_code(string_code);  /* When a string is found  */
@@ -119,8 +124,8 @@ void Encoder::output_code(unsigned int code) {
     }
 
     /* sends new bytes near the top (MSB) */
-    output_bits_buffer |= (unsigned long) code << (32-CUR_BITS-output_bits_count);
-    output_bits_count += CUR_BITS;
+    output_bits_buffer |= (unsigned long) code << (32 - this->current_bits - output_bits_count);
+    output_bits_count += this->current_bits;
     while (output_bits_count >= 8)
     {
         /* no check for error but if there was a problem we'd know from the time we wrote the identifier */
