@@ -11,7 +11,6 @@
 #define FIRST_CODE (1 << CHAR_BIT)
 #define BITS 17
 #define TABLE_SIZE 131101
-#define HASHING_SHIFT (BITS-8)
 #define MAX_CODE (1 << BITS)-2
 #define CURRENT_MAX_CODES(x) (1UL << (x))
 #define LZW_DETECTION "LZW"

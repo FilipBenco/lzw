@@ -3,6 +3,9 @@
 
 #include <fstream>
 #include "base.h"
+
+#define HASHING_SHIFT (BITS-8)
+
 using namespace std;
 
 class Encoder : public Base
@@ -17,7 +20,7 @@ public:
 	~Encoder();
 private:
     void encode();
-    int find_match(unsigned int hash_prefix,unsigned int hash_character);
+    int find_code_index(unsigned int hash_prefix,unsigned int hash_character);
     void output_code(unsigned int code);
 };
 

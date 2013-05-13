@@ -34,9 +34,9 @@ Decoder::Decoder(string inputFile, string outputFile)
 		this->lzw_file.close();
 		this->output_file.close();
 		
-	} catch(const char* str) {
-		std::cerr << str << std::endl;
 	} catch(string str) {
+		std::cerr << str << std::endl;
+	} catch(char* str) {
 		std::cerr << str << std::endl;
 	}
 
@@ -104,7 +104,10 @@ void Decoder::expand() {
 			old_code=new_code;
 			
 
-		} catch (const char* str) {
+		} catch(std::string str) {
+			std::cerr << str << std::endl;
+			break;
+		} catch(char* str) {
 			std::cerr << str << std::endl;
 			break;
 		}
