@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="LibreOffice 3.6  (Linux)">
+	<META NAME="CREATED" CONTENT="20130513;16365649">
+	<META NAME="CHANGED" CONTENT="20130514;2503800">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin: 2cm }
+		P { margin-bottom: 0.21cm }
+		H1 { margin-bottom: 0.21cm }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt }
+		H1.cjk { font-family: "Microsoft YaHei"; font-size: 16pt }
+		H1.ctl { font-family: "Mangal"; font-size: 16pt }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; font-style: italic }
+		H2.cjk { font-family: "Microsoft YaHei"; font-size: 14pt; font-style: italic }
+		H2.ctl { font-family: "Mangal"; font-size: 14pt; font-style: italic }
+		TD P { margin: 0.1cm; }
+		A:link { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="cs-CZ" DIR="LTR">
+<H1 CLASS="western" ALIGN=CENTER>LZW kompresia</H1>
+<P>Maroš Gonda (325171)</P>
+<P>Filip Benčo (359675)</P>
+<P><BR><BR>
+</P>
+<P>PA171 – Digital Image Filtering</P>
+<P>Jar 2013</P>
+<H1 CLASS="western">Popis metódy</H1>
+<H2 CLASS="western">Kompresia:</H2>
+<P>Na začiatku sa do slovníku zapíšu všetky znaky abecedy.
+Následne sa opakujú tieto kroky:</P>
+<OL>
+	<LI><P>Na&nbsp;vstupe sa nájde najdhlšia fráza, ktorá už
+	v&nbsp;slovníku existuje. Jej index sa zapíše na&nbsp;výstup.</P>
+	<LI><P>Nájdená fráza sa zo&nbsp;vstupu odstráni.</P>
+	<LI><P>Ako nová fráza sa použije nájdená fráza + prvý znak
+	zo&nbsp;vstupu.</P>
+</OL>
+<H2 CLASS="western">Dekompresia:</H2>
+<P>Na začiatku dekompresie sa do&nbsp;slovníku zapíšu všetky
+znaky abecedy. Následne sa opakujú tieto kroky:</P>
+<OL>
+	<LI><P>Zo&nbsp;vstupu sa odstráni index a na&nbsp;výstup sa pridá
+	odpovedajúca fráza (podľa už nájdených fráz).</P>
+	<LI><P>Do&nbsp;slovníku sa doplní fráza z&nbsp;minulého kroku +
+	prvý znak fráze z&nbsp;aktuálneho.</P>
+</OL>
+<H1 CLASS="western">Špecifikácia kódovacej schémy</H1>
+<P>Skomprimovaný súbor je identifikovaný znakmi LZW a minimálnou
+dĺžkou kódu. 
+</P>
+<TABLE CELLPADDING=4 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD BGCOLOR="#cfe7f5" STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>LZW</P>
+		</TD>
+		<TD BGCOLOR="#cfe7f5" STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>MAX_CODE_LEN</P>
+		</TD>
+		<TD BGCOLOR="#cfe7f5" STYLE="border: 1px solid #000000; padding: 0.1cm">
+			<P>INDEXY ZAKÓDOVANÝCH REŤAZCOV</P>
+		</TD>
+	</TR>
+</TABLE>
+<H1 CLASS="western">Použitie</H1>
+<P STYLE="margin-bottom: 0cm">Obe časti aplikácie (kompresia,
+dekompresia) sa spúštajú z príkazového riadku.</P>
+<H2 CLASS="western"><FONT SIZE=3 STYLE="font-size: 13pt">Kompresia:</FONT></H2>
+<P STYLE="margin-bottom: 0cm"><B>lzw.exe inputFile outputLZWFile</B></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><B>inputFile</B> – vstupný súbor,
+ktorý chceme skomprimovať</P>
+<P STYLE="margin-bottom: 0cm"><B>output</B><B>LZW</B><B>File</B> –
+výstupný súbor, ktorý bude obsahovať skomprimovaný originál</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<H2 CLASS="western"><FONT SIZE=3 STYLE="font-size: 13pt">Dekompresia:</FONT></H2>
+<P STYLE="margin-bottom: 0cm"><B>lzw.exe -d/--decode lzwFile
+outputFile</B></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><B>-d/--decode</B> – príznak
+určujúci, že sa jedná o spätnú dekomrpesiu</P>
+<P STYLE="margin-bottom: 0cm"><B>inputLZW</B><B>File</B> – vstupný
+súbor obsahujúci dáta, skomprimované navrhnutou <SPAN STYLE="text-decoration: none">LZW</SPAN>
+kompresiou</P>
+<P STYLE="margin-bottom: 0cm"><B>outputFile</B> – výstupný už
+dekomprimovaný súbor</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<H1 CLASS="western">Výsledky</H1>
+<P>Porovnania veľkostí originálnych a komprimovaných súborov:<BR><BR><BR>
+</P>
+<TABLE   CELLPADDING=4 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD COLSPAN=4 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=CENTER><B>Originálny súbor</B></P>
+		</TD>
+		<TD COLSPAN=2 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=CENTER><B>Komprimovaný súbor</B></P>
+		</TD>
+		<TD ROWSPAN=2 STYLE="border: 1px solid #000000; padding: 0.1cm">
+			<P ALIGN=CENTER><B>Kompresný pomer</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Názov</B></P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Schéma</B></P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Rozlíšenie</B></P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Veľkosť</B></P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Názov</B></P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P><B>Veľkosť</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>auto.bmp</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>24bit RGB</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>640&nbsp;x&nbsp;480 pix</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>921&nbsp;722 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>auto.lzw</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>138&nbsp;964 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>15%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>dots.bmp</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>8bit Gray</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>64&nbsp;x&nbsp;64 pix</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>5&nbsp;242 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>dots.lzw</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>2&nbsp;262 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>43%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>gradient.bmp</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>16 indexed colors</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>256&nbsp;x&nbsp;256 pix</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>32&nbsp;954 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>gradient.lzw</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>4&nbsp;798 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>14,6%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>text.txt</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>ASCII</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>35 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>text.lzw</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>43 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>123%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>sample.bmp</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>24bit RGB</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>10&nbsp;x&nbsp;10 pix</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>522 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>sample.lzw</P>
+		</TD>
+		<TD  STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>470 B</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>90%</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD COLSPAN=7   HEIGHT=7 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER><B>Reálne foto</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle.bmp</P>
+		</TD>
+		<TD STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>24bit RGB</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>1600&nbsp;x&nbsp;1200 pix</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>5&nbsp;760&nbsp;122 B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle.lzw</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>8&nbsp;096&nbsp;826 B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>140,5%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle-indexed.bmp</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>256 indexed colors</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>1600&nbsp;x&nbsp;1200</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>1&nbsp;921&nbsp;146 B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle-indexed.lzw</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>2&nbsp;480&nbsp;741 B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>129%</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle-indexed32.bmp</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>32 indexed colors</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>1600&nbsp;x&nbsp;1200</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT> 1&nbsp;920&nbsp;250B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>Castle-indexed32.lzw</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P ALIGN=RIGHT>379&nbsp;339 B</P>
+		</TD>
+		<TD   STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0.1cm">
+			<P ALIGN=CENTER>20%</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P>LZW bezstratová kompresia je veľmi účinný typ kódovania dát
+pre často sa vyskytujúce hodnoty, kde kompresné pomery dosahovali
+vynikajúcich hodnôt (vhodné pre veľké obrazy s malým počtom
+indexovaných farieb, kreslené obrazy používajúce veľmi často
+rovnaké odtiene farbieb, ale aj dlhší text). Naopak, úplne
+nevhodná je na použitie u značne heterogénnych dát s množstvom
+diferencovaných hodnôt (veľké fotografie prevedené z formátu
+JPEG, krátky text málo sa opakujúcich písmen), kde kompresné
+pomery dosahovali aj hodnoty presahujúce 100%, a teda komprimovaný
+súbor mal ešte väčšiu veľkosť než obrázok pôvodný.</P>
+</BODY>
+</HTML>
